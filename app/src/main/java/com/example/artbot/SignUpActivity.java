@@ -1,6 +1,7 @@
 package com.example.artbot;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,15 +12,34 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.artbot.model.DnSignUp;
+import com.example.artbot.model.LoginRes;
+import com.example.artbot.network.DataService;
+import com.example.artbot.network.RetrofitInstance;
+import com.google.gson.JsonObject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+
 public class SignUpActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
 
+    @BindView(R.id.input_name)
     EditText _userNameText;
+    @BindView(R.id.input_email)
     EditText _emailText;
+    @BindView(R.id.input_pass)
     EditText _passwordText;
+    @BindView(R.id.input_cpass)
     EditText _conpasswordText;
+    @BindView(R.id.btn_sign)
     Button _signupButton;
+    @BindView(R.id.link_login)
     TextView _loginLink;
 
     @Override
@@ -27,14 +47,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-
-        _userNameText = findViewById(R.id.input_name);
-        _emailText = findViewById(R.id.input_email);
-        _passwordText = findViewById(R.id.input_pass);
-        _conpasswordText = findViewById(R.id.input_cpass);
-        _signupButton = findViewById(R.id.btn_sign);
-        _loginLink = findViewById(R.id.link_login);
-
+        ButterKnife.bind(this);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +72,6 @@ public class SignUpActivity extends AppCompatActivity {
             onSignupFailed();
             return;
         }
-
         _signupButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(SignUpActivity.this,
@@ -68,9 +80,38 @@ public class SignUpActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        onSignupSuccess();
+        String name = _userNameText.getText().toString();
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
 
-        progressDialog.dismiss();
+
+        DataService service = RetrofitInstance.getRetrofitInstance().create(DataService.class);
+        Call<DnSignUp> call = service.signUp(name, email, password, password);
+        call.enqueue(new Callback<DnSignUp>() {
+            @Override
+            public void onResponse(Call<DnSignUp> call, Response<DnSignUp> response) {
+
+                if (response.isSuccessful()) {
+                    String jsonString = response.body().toString();
+                    if (jsonString.contains("message:")) {
+                        onSignupSuccess();
+                    }
+                }
+//                Log.i("Response:","Sign UP Done");
+//
+
+                progressDialog.dismiss();
+                onSignupSuccess();
+            }
+
+            @Override
+            public void onFailure(Call<DnSignUp> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.i("Failure:", t.getMessage());
+                onSignupFailed();
+            }
+        });
+
 
     }
 
@@ -122,4 +163,5 @@ public class SignUpActivity extends AppCompatActivity {
 
         return valid;
     }
+
 }

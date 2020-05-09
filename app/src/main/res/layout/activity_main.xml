@@ -20,6 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <com.example.artbot.CurvedBottomNavigationView
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
@@ -27,7 +28,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="parent">
-
         </com.example.artbot.CurvedBottomNavigationView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

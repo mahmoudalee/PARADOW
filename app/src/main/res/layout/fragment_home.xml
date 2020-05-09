@@ -50,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/recommended"/>
 
+
             <TextView
                 android:id="@+id/courses"
                 android:layout_width="match_parent"
