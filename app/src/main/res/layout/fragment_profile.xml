@@ -243,8 +243,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="60dp"
         android:text="Version 2.5.0.1"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
 
 </LinearLayout>

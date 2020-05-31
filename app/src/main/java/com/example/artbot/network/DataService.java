@@ -1,8 +1,9 @@
 package com.example.artbot.network;
 
-import com.example.artbot.model.DnSignUp;
+import com.example.artbot.model.CategoryRes;
 import com.example.artbot.model.LoginRes;
-import com.google.gson.JsonObject;
+import com.example.artbot.model.MostLike;
+import com.example.artbot.model.SignupRes;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -17,7 +18,19 @@ public interface DataService {
     Call<LoginRes> login(@Query("email") String login, @Query("password") String password);
 
     @GET("/api/signup")
-    Call<DnSignUp> signUp(@Query("name")String name, @Query("email") String login, @Query("password") String password, @Query("repassword") String repassword);
+    Call<SignupRes> signUp(@Query("name")String name, @Query("email") String login, @Query("password") String password);
+
+    @GET("/api/mostliked")
+    Call<MostLike> mostliked();
+
+    @GET("/api/mostviewed")
+    Call<MostLike> Recommendations();
+
+    @GET("/api/category")
+    Call<CategoryRes> Categories();
+
+//    @GET("/api/category")
+//    Call<CategoryRes> ImageReview();
 
 //    @GET("/en_US/api/user/get_token")
 //    Call<LoginRes> login(@Query("login") String login, @Query("password") String password);

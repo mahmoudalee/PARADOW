@@ -1,7 +1,6 @@
 package com.example.artbot;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,11 +11,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.artbot.model.DnSignUp;
-import com.example.artbot.model.LoginRes;
+import com.example.artbot.model.SignupRes;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +42,9 @@ public class SignUpActivity extends AppCompatActivity {
     Button _signupButton;
     @BindView(R.id.link_login)
     TextView _loginLink;
+
+
+    String name,email,password,Cpassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,32 +84,48 @@ public class SignUpActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        String name = _userNameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-
+        //not needed it initialized in validation method
+        // name = _userNameText.getText().toString();
+        //        email = _emailText.getText().toString();
+        //        password = _passwordText.getText().toString();
+        //        Cpassword = _conpasswordText.getText().toString();
 
         DataService service = RetrofitInstance.getRetrofitInstance().create(DataService.class);
-        Call<DnSignUp> call = service.signUp(name, email, password, password);
-        call.enqueue(new Callback<DnSignUp>() {
+        Call<SignupRes> call = service.signUp(name, email, password);
+        call.enqueue(new Callback<SignupRes>() {
             @Override
-            public void onResponse(Call<DnSignUp> call, Response<DnSignUp> response) {
-
-                if (response.isSuccessful()) {
-                    String jsonString = response.body().toString();
-                    if (jsonString.contains("message:")) {
-                        onSignupSuccess();
-                    }
-                }
-//                Log.i("Response:","Sign UP Done");
-//
+            public void onResponse(Call<SignupRes> call, Response<SignupRes> response) {
 
                 progressDialog.dismiss();
-                onSignupSuccess();
+
+                if(response.code()==400) {
+
+                    _signupButton.setEnabled(true);
+                    Log.i(TAG+" Response:","Email Duplicated");
+
+//                    Toast.makeText(getBaseContext(), "this email already used"+response.errorBody().toString(), Toast.LENGTH_LONG).show();
+                    Gson gson = new GsonBuilder().create();
+                    SignupRes mError=new SignupRes();
+                    try {
+                        mError= gson.fromJson(response.errorBody().string(),SignupRes .class);
+                        if(mError.getMessage().getRememberToken().contains("Duplicated"))
+                        Toast.makeText(getApplicationContext(), "this email already used", Toast.LENGTH_LONG).show();
+                    } catch (IOException e) {
+                        // handle failure to read error
+                    }
+                }
+                else
+                {
+                    onSignupSuccess();
+                    Log.i("Response:", "Sign UP Done" + response.body().getMessage().getRememberToken());
+
+                }
+
+
             }
 
             @Override
-            public void onFailure(Call<DnSignUp> call, Throwable t) {
+            public void onFailure(Call<SignupRes> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.i("Failure:", t.getMessage());
                 onSignupFailed();
@@ -130,10 +150,10 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String name = _userNameText.getText().toString();
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
-        String Cpassword = _conpasswordText.getText().toString();
+        name = _userNameText.getText().toString();
+        email = _emailText.getText().toString();
+        password = _passwordText.getText().toString();
+        Cpassword = _conpasswordText.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
             _userNameText.setError("at least 3 characters");

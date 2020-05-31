@@ -61,14 +61,14 @@ public class LoginActivity extends AppCompatActivity {
 
         token = preferences.getString("token", null);
 
-//        if (token != null){
-//            Intent intent = new Intent(this, MainActivity.class);
-////
-////            intent.putExtra("user",user);
-////
-//            startActivity(intent);
-//            finish();
-//        }
+        if (token != null){
+            Intent intent = new Intent(this, MainActivity.class);
+//
+//            intent.putExtra("user",user);
+//
+            startActivity(intent);
+            finish();
+        }
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -90,9 +90,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
 
 
@@ -113,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
+        //TODO:(3) if some edit needed to back press not close the dialog
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
@@ -126,20 +124,30 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<LoginRes> call, Response<LoginRes> response) {
 
-                SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
-
-                preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
-
-
-                Log.i("Response:",response.body().getMessage().getRememberToken());
-
-                user.setName(response.body().getMessage().getUserData().getName());
-                user.setPhoto(response.body().getMessage().getUserData().getPhoto());
-                user.setFavProduct(response.body().getMessage().getUserData().getFavProduct());
-                user.setId(response.body().getMessage().getUserData().getId());
-
                 progressDialog.dismiss();
-                onLoginSuccess();
+
+                if (response.code()==400)
+                {
+                    Log.i("Response:","Incorrect email or password");
+                    Toast.makeText(getApplicationContext(), "Incorrect email or password", Toast.LENGTH_LONG).show();
+                    _loginButton.setEnabled(true);
+                }
+                else{
+                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
+
+                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
+
+
+                    Log.i("Response:",response.body().getMessage().getRememberToken());
+
+                    user.setName(response.body().getMessage().getUserData().getName());
+                    user.setPhoto(response.body().getMessage().getUserData().getPhoto());
+                    user.setFavProduct(response.body().getMessage().getUserData().getFavProduct());
+                    user.setId(response.body().getMessage().getUserData().getId());
+
+                    onLoginSuccess();
+
+                }
             }
 
             @Override
