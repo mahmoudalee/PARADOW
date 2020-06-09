@@ -1,12 +1,15 @@
 package com.example.artbot.network;
 
 import com.example.artbot.model.CategoryRes;
+import com.example.artbot.model.FavRes;
 import com.example.artbot.model.LoginRes;
 import com.example.artbot.model.MostLike;
 import com.example.artbot.model.SignupRes;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface DataService {
@@ -28,6 +31,16 @@ public interface DataService {
 
     @GET("/api/category")
     Call<CategoryRes> Categories();
+
+
+    @GET("/api/user/{id}")
+    Call<FavRes> Favs(@Path("id") Long id);
+
+    @GET("/api/user/catfav")
+    Call<FavRes> Like(@Query("id")String id,@Query("remember_token")String token);
+
+    @GET("/api/user/catDelfav")
+    Call<FavRes> DisLike(@Query("id")String id,@Query("remember_token")String token);
 
 //    @GET("/api/category")
 //    Call<CategoryRes> ImageReview();

@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.artbot.R;
 import com.example.artbot.frags.DiscoverFragment;
 import com.example.artbot.model.CategoryRes;
+import com.example.artbot.utils.StringRefactor;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -63,7 +64,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 //                .transform(new BlurTransformation())
                 .into(holder.imageView);
 
-        //TODO:(2) make the string more readable
+
         holder.mName.setText(categories.get(i).getName());
 
     }

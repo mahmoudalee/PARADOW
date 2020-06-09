@@ -172,8 +172,7 @@ public class HomeFragment extends Fragment
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        //TODO(4):open the image
-        Toast.makeText(getContext(), "Card number: "+clickedItemIndex+" clicked", Toast.LENGTH_LONG).show();
+        //dTODO(4):open the image
         Intent i = new Intent(getContext() , ReviewActivity.class);
 
         i.putExtra("id",homeCards.get(clickedItemIndex).getId());

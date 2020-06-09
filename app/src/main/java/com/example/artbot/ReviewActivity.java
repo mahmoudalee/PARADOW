@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.artbot.adapters.ViewPagerAdapter;
+import com.example.artbot.utils.StringRefactor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,10 +50,10 @@ public class ReviewActivity extends AppCompatActivity {
         nColor = intent.getStringExtra("n_color");
         nFavs = intent.getStringExtra("n_fav");
 
-        Toast.makeText(this, "ReviewActivity "+id+":id , "+title+":title", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "ReviewActivity "+id+":id , "+title+":title", Toast.LENGTH_LONG).show();
         makeViewPager();
 
-        mimageName.setText(title);
+        mimageName.setText(StringRefactor.getENstring(title));
         mcatName.setText(catName);
 
 
@@ -73,7 +74,7 @@ public class ReviewActivity extends AppCompatActivity {
         // used to create the dots that indicate which photo shown in home
         for(int i = 0; i < dotscount; i++){
             dots[i] = new ImageView(this);
-            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.active_dot));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.non_active_dot));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(8, 0, 8, 4);
@@ -81,7 +82,7 @@ public class ReviewActivity extends AppCompatActivity {
             sliderDotspanel.addView(dots[i], params);
         }
         //set the default active to the first dot
-        dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.non_active_dot));
+        dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.active_dot));
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

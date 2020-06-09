@@ -3,6 +3,7 @@ package com.example.artbot.frags;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +21,13 @@ import com.example.artbot.R;
 import com.example.artbot.adapters.CategoriesAdapter;
 import com.example.artbot.adapters.HomeCardsAdapter;
 import com.example.artbot.model.CategoryRes;
+import com.example.artbot.model.Datum;
+import com.example.artbot.model.MostLike;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +51,8 @@ public class DiscoverFragment extends Fragment
     CategoriesAdapter mAdapter;
 
     private Unbinder unbinder;
+    List<CategoryRes.Message> categories;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,7 +87,6 @@ public class DiscoverFragment extends Fragment
 
     private void callCategories() {
         DataService service = RetrofitInstance.getRetrofitInstance().create(DataService.class);
-
         Call<CategoryRes> call = service.Categories();
         call.enqueue(new Callback<CategoryRes>() {
             @Override
@@ -95,7 +100,8 @@ public class DiscoverFragment extends Fragment
                 else{
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
-                    Log.i("Response:",response.body().getMessage().get(0).getName());
+                    categories = response.body().getMessage();
+                    Log.i("Response:",categories.get(0).getName());
                     publishCategories(response.body());
                 }
             }
@@ -116,7 +122,16 @@ public class DiscoverFragment extends Fragment
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        //TODO(5):open the category
-        Toast.makeText(getContext(), "Card number: "+clickedItemIndex+" clicked", Toast.LENGTH_LONG).show();
+        //dTODO(5):open the category
+        Intent intent = new Intent(getContext(), CategoryActivity.class);
+
+        ArrayList<Datum> catItems = (ArrayList<Datum>) categories.get(clickedItemIndex).getData();
+        Bundle bundle = new Bundle();
+
+        bundle.putParcelableArrayList("catItems", catItems);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+
     }
 }

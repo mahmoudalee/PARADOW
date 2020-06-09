@@ -13,6 +13,7 @@ import com.example.artbot.frags.DiscoverFragment;
 import com.example.artbot.frags.HomeFragment;
 import com.example.artbot.frags.FavoritesFragment;
 import com.example.artbot.frags.ProfileFragment;
+import com.example.artbot.model.UserData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sdsmdg.harjot.vectormaster.models.PathModel;
 
@@ -23,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
     Intent callerIntent;
     String token;
     SharedPreferences sharedPreferences;
+//    UserData user;
+    Long userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences=getSharedPreferences("myPrefs",MODE_PRIVATE);
         token=sharedPreferences.getString("token",null);
-        callerIntent= this.getIntent();
+
+        userID=sharedPreferences.getLong("userID",-1);
+
+//        callerIntent= this.getIntent();
+//        user =  callerIntent.getParcelableExtra("user");
+
+
+
 
         bottomNavigationView.inflateMenu(R.menu.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
@@ -51,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new DiscoverFragment();
                     break;
                 case R.id.nav_favorites:
-                    selectedFragment = new FavoritesFragment();
+                    selectedFragment = new FavoritesFragment(userID);
                     break;
                 case R.id.nav_profile:
                     selectedFragment = new ProfileFragment();

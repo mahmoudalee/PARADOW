@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
     UserData user = new UserData();
     String token;
-
+    Long userID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +60,8 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
         token = preferences.getString("token", null);
-
+        userID = preferences.getLong("userID", -1);
+//
         if (token != null){
             Intent intent = new Intent(this, MainActivity.class);
 //
@@ -136,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
                     preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
-
+                    preferences.edit().putLong("userID", response.body().getMessage().getUserData().getId()).apply();
 
                     Log.i("Response:",response.body().getMessage().getRememberToken());
 
@@ -193,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         intent.putExtra("user", user);
+
         startActivity(intent);
         finish();
     }

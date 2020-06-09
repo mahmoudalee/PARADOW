@@ -12,17 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.artbot.R;
-import com.example.artbot.frags.HomeFragment;
 import com.example.artbot.model.MostLike;
+import com.example.artbot.model.UserFav;
 import com.example.artbot.utils.StringRefactor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.ViewHolder> {
+public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
 
     final private ListItemClickListener mOnClickListener;
 
@@ -30,14 +29,12 @@ public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.View
         void onListItemClick(int clickedItemIndex);
     }
 
-    List<MostLike.Message> mostLikes;
-    int flag = 0;
+    List<UserFav> favs;
     String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
     Context context;
 
-    public HomeCardsAdapter(ListItemClickListener listener, int i) {
+    public FavsAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
-        flag = i;
     }
 
     @NonNull
@@ -45,17 +42,7 @@ public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.View
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
 
-        int layoutIdForListItem = 0;
-
-        if (flag == 1)
-            layoutIdForListItem = R.layout.home_card_item;
-
-        else if(flag == 2)
-            layoutIdForListItem = R.layout.cat_item;
-
-        else if(flag == 3)
-            layoutIdForListItem = R.layout.fav_item;
-
+        int layoutIdForListItem = R.layout.fav_item;
 
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
@@ -70,15 +57,15 @@ public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.View
 //        holder.imageView.setImageResource(mostLikes.get(i).getImage());
 
         Glide.with(context)
-                .load(IMAGE_BASE_URL + mostLikes.get(i).getImage())
+                .load(IMAGE_BASE_URL + favs.get(i).getImage())
                 .placeholder(R.drawable.loading)
                 .error(R.mipmap.ic_launcher)
                 .into(holder.imageView);
 
         //dTODO:(2) make the string more readable
-        holder.mName.setText(StringRefactor.getENstring(mostLikes.get(i).getTitle()));
+        holder.mName.setText(StringRefactor.getENstring(favs.get(i).getTitle()));
 
-        holder.mDiscription.setText(mostLikes.get(i).getRate());
+        holder.mDiscription.setText(favs.get(i).getRate());
 
         holder.fav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +77,7 @@ public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.View
 
     @Override
     public int getItemCount() {
-        return mostLikes==null?0:mostLikes.size();
+        return favs==null?0:favs.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -99,8 +86,11 @@ public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.View
 
         @BindView(R.id.image_card_view)
         ImageView imageView;
-        @BindView(R.id.fav_dis)
+
+        // that 's liked
+        @BindView(R.id.fav)
         ImageView fav;
+
         @BindView(R.id.name_card_view)
         TextView mName;
         @BindView(R.id.description_card_view)
@@ -121,8 +111,8 @@ public class HomeCardsAdapter extends RecyclerView.Adapter<HomeCardsAdapter.View
         }
     }
 
-    public void setData(List<MostLike.Message> mostLikes) {
-        this.mostLikes = mostLikes;
+    public void setData(List<UserFav> favs) {
+        this.favs = favs;
         notifyDataSetChanged();
     }
 }
