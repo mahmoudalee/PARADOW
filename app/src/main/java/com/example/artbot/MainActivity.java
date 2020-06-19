@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     CurvedBottomNavigationView bottomNavigationView;
 
     Intent callerIntent;
-    String token;
+    public static String token;
     SharedPreferences sharedPreferences;
 //    UserData user;
     Long userID;
