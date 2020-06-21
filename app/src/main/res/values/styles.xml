@@ -27,4 +27,9 @@
         <item name="android:textColorPrimary">@color/iron</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
+
+    <style name="ProgressBar.Theme" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/loading</item>
+        <item name="android:indeterminateTint">@color/colorPrimary</item>
+    </style>
 </resources>

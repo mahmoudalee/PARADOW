@@ -3,7 +3,6 @@ package com.example.artbot.frags;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.artbot.CategoryActivity;
 import com.example.artbot.R;
 import com.example.artbot.adapters.CategoriesAdapter;
-import com.example.artbot.adapters.HomeCardsAdapter;
 import com.example.artbot.model.CategoryRes;
 import com.example.artbot.model.Datum;
-import com.example.artbot.model.MostLike;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
 
@@ -117,7 +114,8 @@ public class DiscoverFragment extends Fragment
     private void publishCategories(CategoryRes body) {
         Log.i("publishCategories:","Start Publish");
         mAdapter.setData(body.getMessage());
-        mRecyclerView.setVisibility(View.VISIBLE);
+        if (mRecyclerView != null)
+            mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override

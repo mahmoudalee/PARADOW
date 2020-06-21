@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.example.artbot.R;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
 
 public class ViewPagerAdapter extends PagerAdapter {
@@ -45,7 +45,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
 //        imageView.setImageResource(images[position]);
 
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(IMAGE_BASE_URL + image )
                 .placeholder(R.drawable.loading)
                 .error(R.mipmap.ic_launcher)

@@ -18,6 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 
@@ -54,8 +58,17 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     // If you want to use the GPU Filters
 
+    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+
+//    implementation "com.kirich1409.svgplugin:glide4:1.0.0"
+//    implementation 'com.caverock:androidsvg:1.4'
 
     def room_version = "2.2.0-rc01"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
+
+
+    implementation "com.google.ar.sceneform.ux:sceneform-ux:1.12.0"
+    implementation 'com.google.ar:core:1.17.0'
+
 }

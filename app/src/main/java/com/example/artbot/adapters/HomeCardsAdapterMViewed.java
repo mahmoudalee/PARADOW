@@ -1,18 +1,24 @@
 package com.example.artbot.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.artbot.MainActivity;
 import com.example.artbot.R;
-import com.example.artbot.model.Datum;
-import com.example.artbot.model.UserFav;
+import com.example.artbot.model.LikeRes;
+import com.example.artbot.model.MostLike;
+import com.example.artbot.network.DataService;
+import com.example.artbot.network.RetrofitInstance;
 import com.example.artbot.utils.LikeClick;
 import com.example.artbot.utils.StringRefactor;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
@@ -21,29 +27,35 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHolder> {
+public class HomeCardsAdapterMViewed extends RecyclerView.Adapter<HomeCardsAdapterMViewed.ViewHolder> {
 
     final private ListItemClickListener mOnClickListener;
 
     public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex);
+        void onMostViewedClick(int clickedItemIndex);
     }
 
-    List<Datum> catItems;
+    List<MostLike.Message> mostViewed;
+
     String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
     Context context;
 
-    public CatItemsAdapter(ListItemClickListener listener) {
+    public HomeCardsAdapterMViewed(ListItemClickListener listener) {
         mOnClickListener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+
         context = parent.getContext();
 
-        int layoutIdForListItem = R.layout.cat_item;
+        int layoutIdForListItem  = R.layout.home_card_item;
 
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
@@ -54,46 +66,41 @@ public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-//        holder.imageView.setImageResource(mostLikes.get(i).getImage());
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int i) {
+//        holder.imageView.setImageResource(mostViewed.get(i).getImage());
 
         GlideApp.with(context)
-                .load(IMAGE_BASE_URL + catItems.get(i).getImage())
+                .load(IMAGE_BASE_URL + mostViewed.get(i).getImage())
                 .placeholder(R.drawable.loading)
                 .error(R.mipmap.ic_launcher)
                 .into(holder.imageView);
 
         //dTODO:(2) make the string more readable
-        holder.mName.setText(StringRefactor.getENstring(catItems.get(i).getTitle()));
+        holder.mName.setText(StringRefactor.getENstring(mostViewed.get(i).getTitle()));
 
-        holder.mDiscription.setText(catItems.get(i).getRate());
+        holder.mDiscription.setText(mostViewed.get(i).getRate());
 
-        holder.fav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO:(1) Implement the love action
-                Long id = catItems.get(holder.getAdapterPosition()).getId();
-                LikeClick.loveAction(v, holder.fav, id, context );
-            }
+        holder.fav.setOnClickListener(v -> {
+            //TODO:(1) Implement the love action
+
+            Long id = mostViewed.get(holder.getAdapterPosition()).getId();
+            LikeClick.loveAction(v, holder.fav, id, context );
+
         });
     }
 
     @Override
     public int getItemCount() {
-        return catItems==null?0:catItems.size();
+        return mostViewed==null?0:mostViewed.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-
         @BindView(R.id.image_card_view)
         ImageView imageView;
-
-        // that 's liked
         @BindView(R.id.fav_dis)
         ImageView fav;
-
         @BindView(R.id.name_card_view)
         TextView mName;
         @BindView(R.id.description_card_view)
@@ -110,12 +117,12 @@ public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHo
         @Override
         public void onClick(View v) {
             int clickPosition = getAdapterPosition();
-            mOnClickListener.onListItemClick(clickPosition);
+            mOnClickListener.onMostViewedClick(clickPosition);
         }
     }
 
-    public void setData(List<Datum> catItems) {
-        this.catItems = catItems;
+    public void setData(List<MostLike.Message> mostViewed) {
+        this.mostViewed = mostViewed;
         notifyDataSetChanged();
     }
 }

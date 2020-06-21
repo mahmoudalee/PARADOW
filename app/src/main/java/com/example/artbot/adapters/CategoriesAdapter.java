@@ -1,6 +1,7 @@
 package com.example.artbot.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,23 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.artbot.R;
-import com.example.artbot.frags.DiscoverFragment;
 import com.example.artbot.model.CategoryRes;
-import com.example.artbot.utils.StringRefactor;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
 
@@ -57,13 +53,22 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-        Glide.with(context)
+//        Glide.with(context)
+//                .load(IMAGE_BASE_URL + categories.get(i).getImage())
+//                .placeholder(R.drawable.loading)
+//                .error(R.mipmap.ic_launcher)
+////                .transform(new BlurTransformation())
+//                .into(holder.imageView);
+
+        Log.i("Catigory Frag"  , categories.get(i).getImage() );
+
+
+
+        GlideApp.with(context)
                 .load(IMAGE_BASE_URL + categories.get(i).getImage())
                 .placeholder(R.drawable.loading)
                 .error(R.mipmap.ic_launcher)
-//                .transform(new BlurTransformation())
                 .into(holder.imageView);
-
 
         holder.mName.setText(categories.get(i).getName());
 

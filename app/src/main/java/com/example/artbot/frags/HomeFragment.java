@@ -2,13 +2,11 @@ package com.example.artbot.frags;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,13 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.artbot.R;
 import com.example.artbot.ReviewActivity;
-import com.example.artbot.adapters.HomeCardsAdapter;
-import com.example.artbot.model.LoginRes;
+import com.example.artbot.adapters.HomeCardsAdapterMLikes;
+import com.example.artbot.adapters.HomeCardsAdapterMViewed;
 import com.example.artbot.model.MostLike;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,7 +37,7 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment
-        implements HomeCardsAdapter.ListItemClickListener {
+        implements HomeCardsAdapterMLikes.ListItemClickListener , HomeCardsAdapterMViewed.ListItemClickListener{
     @BindView(R.id.rv_recommends)
     RecyclerView rvRecommends;
 
@@ -55,11 +52,12 @@ public class HomeFragment extends Fragment
 
     RecyclerView.LayoutManager mLayoutManager;
 
-    HomeCardsAdapter mRecAdapter;
-    HomeCardsAdapter mPopAdapter;
+    HomeCardsAdapterMViewed mRecAdapter;
+    HomeCardsAdapterMLikes mPopAdapter;
 
     private Unbinder unbinder;
-    List<MostLike.Message> homeCards;
+    List<MostLike.Message> homeCardsMLikes;
+    List<MostLike.Message> homeCardsMViewed;
 
     @Nullable
     @Override
@@ -82,20 +80,21 @@ public class HomeFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        rvPopulars.setHasFixedSize(true);
-
         rvRecommends.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(getContext() , LinearLayoutManager.HORIZONTAL , false);
-        rvPopulars.setLayoutManager(mLayoutManager);
+        rvPopulars.setHasFixedSize(true);
+
 
         mLayoutManager = new LinearLayoutManager(getContext() , LinearLayoutManager.HORIZONTAL , false);
         rvRecommends.setLayoutManager(mLayoutManager);
 
-        mRecAdapter = new HomeCardsAdapter( this , 1);
+        mLayoutManager = new LinearLayoutManager(getContext() , LinearLayoutManager.HORIZONTAL , false);
+        rvPopulars.setLayoutManager(mLayoutManager);
+
+        mRecAdapter = new HomeCardsAdapterMViewed( this);
         rvRecommends.setAdapter(mRecAdapter);
 
-        mPopAdapter = new HomeCardsAdapter( this , 1);
+        mPopAdapter = new HomeCardsAdapterMLikes( this);
         rvPopulars.setAdapter(mPopAdapter);
     }
 
@@ -116,6 +115,7 @@ public class HomeFragment extends Fragment
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
                     Log.i("Response:",response.body().getMessage().get(0).getDescription());
+                    homeCardsMViewed = response.body().getMessage();
                     publishRecommend(response.body());
                 }
             }
@@ -128,10 +128,14 @@ public class HomeFragment extends Fragment
     }
 
     private void publishRecommend(MostLike body) {
+        //TODO: Check for images
         Log.i("publishRecommend:","Start Publish");
         mRecAdapter.setData(body.getMessage());
-        rvRecommends.setVisibility(View.VISIBLE);
-        recProgressBar.setVisibility(View.GONE);
+        if(rvRecommends != null){
+            rvRecommends.setVisibility(View.VISIBLE);
+            recProgressBar.setVisibility(View.GONE);
+        }
+
     }
 
     private void callMostLike(){
@@ -141,16 +145,22 @@ public class HomeFragment extends Fragment
             @Override
             public void onResponse(Call<MostLike> call, Response<MostLike> response) {
 
+                Log.i("Response:","Server  response code:"+response.code());
+
                 if (response.code()==400)
                 {
                     Log.i("Response:","MostLike have a problem");
                     Toast.makeText(getContext(), "MostLike can't be loaded", Toast.LENGTH_LONG).show();
                 }
+                else if(response.code() == 502){
+                    Log.i("Response:","Server have a problem");
+                }
                 else{
+
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
                     Log.i("Response:",response.body().getMessage().get(0).getDescription());
-                    homeCards = response.body().getMessage();
+                    homeCardsMLikes = response.body().getMessage();
                     publishMostLike(response.body());
                 }
             }
@@ -166,25 +176,57 @@ public class HomeFragment extends Fragment
     private void publishMostLike(MostLike body) {
         Log.i("publishMostLike:","Start Publish");
         mPopAdapter.setData(body.getMessage());
-        rvPopulars.setVisibility(View.VISIBLE);
-        popProgressBar.setVisibility(View.GONE);
+        if(rvPopulars != null){
+            rvPopulars.setVisibility(View.VISIBLE);
+            popProgressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public void onListItemClick(int clickedItemIndex) {
+    public void onMostLikeClick(int clickedItemIndex) {
         //dTODO(4):open the image
+        Log.i("Home ", "MostLike Clicked ");
+        Log.i("Home ", "MostLike Clicked " +homeCardsMLikes.get(clickedItemIndex).getImage());
+        Log.i("Home ", "MostLike Clicked " +homeCardsMLikes.get(clickedItemIndex).getTitle());
+
         Intent i = new Intent(getContext() , ReviewActivity.class);
 
-        i.putExtra("id",homeCards.get(clickedItemIndex).getId());
-        i.putExtra("catName",homeCards.get(clickedItemIndex).getCategoryName());
-        i.putExtra("title",homeCards.get(clickedItemIndex).getTitle());
-        i.putExtra("price",homeCards.get(clickedItemIndex).getPriceAfterOff());
-        i.putExtra("image",homeCards.get(clickedItemIndex).getImage());
-        i.putExtra("n_color",homeCards.get(clickedItemIndex).getNoOfColor());
-        i.putExtra("n_fav",homeCards.get(clickedItemIndex).getFavProduct());
+        if(homeCardsMLikes.get(clickedItemIndex) != null){
+            i.putExtra("id",homeCardsMLikes.get(clickedItemIndex).getId());
+            i.putExtra("catName",homeCardsMLikes.get(clickedItemIndex).getCategoryName());
+            i.putExtra("title",homeCardsMLikes.get(clickedItemIndex).getTitle());
+            i.putExtra("price",homeCardsMLikes.get(clickedItemIndex).getPriceAfterOff());
+            i.putExtra("image",homeCardsMLikes.get(clickedItemIndex).getImage());
+            i.putExtra("n_color",homeCardsMLikes.get(clickedItemIndex).getNoOfColor());
+            i.putExtra("n_fav",homeCardsMLikes.get(clickedItemIndex).getFavProduct());
 
 
-        startActivity(i);
+            startActivity(i);
+        }
 
+
+    }
+
+    @Override
+    public void onMostViewedClick(int clickedItemIndex) {
+//dTODO(4):open the image
+        Log.i("Home ", "MostViewed Clicked ");
+        Log.i("Home ", "MostViewed Clicked " +homeCardsMViewed.get(clickedItemIndex).getImage());
+        Log.i("Home ", "MostViewed Clicked " +homeCardsMViewed.get(clickedItemIndex).getTitle());
+
+        Intent i = new Intent(getContext() , ReviewActivity.class);
+
+        if(homeCardsMViewed.get(clickedItemIndex) != null){
+            i.putExtra("id",homeCardsMViewed.get(clickedItemIndex).getId());
+            i.putExtra("catName",homeCardsMViewed.get(clickedItemIndex).getCategoryName());
+            i.putExtra("title",homeCardsMViewed.get(clickedItemIndex).getTitle());
+            i.putExtra("price",homeCardsMViewed.get(clickedItemIndex).getPriceAfterOff());
+            i.putExtra("image",homeCardsMViewed.get(clickedItemIndex).getImage());
+            i.putExtra("n_color",homeCardsMViewed.get(clickedItemIndex).getNoOfColor());
+            i.putExtra("n_fav",homeCardsMViewed.get(clickedItemIndex).getFavProduct());
+
+
+            startActivity(i);
+        }
     }
 }

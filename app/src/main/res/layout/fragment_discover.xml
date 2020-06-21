@@ -66,7 +66,8 @@
             android:layout_margin="10dp"
             android:background="@color/white"
             android:orientation="vertical"
-            app:corner_radius="50dp">
+            app:corner_radius="50dp"
+            android:onClick="CameraOpen">
 
             <ImageView
                 android:layout_width="match_parent"

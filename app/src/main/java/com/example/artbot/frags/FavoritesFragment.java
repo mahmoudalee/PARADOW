@@ -12,22 +12,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.artbot.R;
-import com.example.artbot.adapters.CategoriesAdapter;
+import com.example.artbot.ReviewActivity;
 import com.example.artbot.adapters.FavsAdapter;
-import com.example.artbot.adapters.HomeCardsAdapter;
-import com.example.artbot.model.CategoryRes;
 import com.example.artbot.model.FavRes;
-import com.example.artbot.model.MostLike;
 import com.example.artbot.model.UserFav;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,10 +45,12 @@ public class FavoritesFragment extends Fragment implements FavsAdapter.ListItemC
 
     private Unbinder unbinder;
     private Long userID;
+    List<UserFav> userFavs;
 
     public FavoritesFragment(Long id) {
         userID = id;
     }
+
 
     @Nullable
     @Override
@@ -105,7 +102,8 @@ public class FavoritesFragment extends Fragment implements FavsAdapter.ListItemC
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
                     Log.i("Response Favs:", String.valueOf(response.body().getMessage().getUserFav().get(1).getTitle()));
-                    publishFavs(response.body());
+                    userFavs = response.body().getMessage().getUserFav();
+                    publishFavs();
                 }
             }
 
@@ -120,13 +118,14 @@ public class FavoritesFragment extends Fragment implements FavsAdapter.ListItemC
 
     }
 
-    private void publishFavs(FavRes body) {
+    private void publishFavs() {
         Log.i("publishFavorites:","Start Publish");
-        List<UserFav> list = body.getMessage().getUserFav();
-        while (list.remove(null)) {
+        while (userFavs.remove(null)) {
         }
-        mAdapter.setData(list);
-        mRecyclerView.setVisibility(View.VISIBLE);
+        mAdapter.setData(userFavs);
+        if(mRecyclerView != null){
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -134,5 +133,23 @@ public class FavoritesFragment extends Fragment implements FavsAdapter.ListItemC
 
         //TODO(5):on image in Category clicked
 
+        Log.i("Home ", "categoryItem Clicked ");
+        Log.i("Home ", "categoryItem Clicked " +userFavs.get(clickedItemIndex).getImage());
+        Log.i("Home ", "categoryItem Clicked " +userFavs.get(clickedItemIndex).getTitle());
+
+        Intent i = new Intent(getContext() , ReviewActivity.class);
+
+        if(userFavs.get(clickedItemIndex) != null){
+            i.putExtra("id",userFavs.get(clickedItemIndex).getId());
+            i.putExtra("catName",userFavs.get(clickedItemIndex).getCategoryName());
+            i.putExtra("title",userFavs.get(clickedItemIndex).getTitle());
+            i.putExtra("price",userFavs.get(clickedItemIndex).getPriceAfterOff());
+            i.putExtra("image",userFavs.get(clickedItemIndex).getImage());
+            i.putExtra("n_color",userFavs.get(clickedItemIndex).getNoOfColor());
+            i.putExtra("n_fav",userFavs.get(clickedItemIndex).getFavProduct());
+
+
+            startActivity(i);
+        }
     }
 }

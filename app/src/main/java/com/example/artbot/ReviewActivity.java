@@ -105,6 +105,14 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     public void choose(View view) {
+        //TODO:Implement device connection
         Toast.makeText(this, "ReviewActivity: nice Choice", Toast.LENGTH_LONG).show();
+    }
+
+    public void Augmented(View view) {
+        //TODO:AR over here
+        Intent intent = new Intent(ReviewActivity.this,AR_Activity.class);
+        intent.putExtra("image" , image);
+        startActivity(intent);
     }
 }

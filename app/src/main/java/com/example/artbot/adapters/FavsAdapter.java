@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.artbot.R;
+import com.example.artbot.frags.FavoritesFragment;
 import com.example.artbot.model.MostLike;
 import com.example.artbot.model.UserFav;
+import com.example.artbot.utils.LikeClick;
 import com.example.artbot.utils.StringRefactor;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
 import java.util.List;
 
@@ -56,7 +59,7 @@ public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
 //        holder.imageView.setImageResource(mostLikes.get(i).getImage());
 
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(IMAGE_BASE_URL + favs.get(i).getImage())
                 .placeholder(R.drawable.loading)
                 .error(R.mipmap.ic_launcher)
@@ -71,6 +74,13 @@ public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 //TODO:(1) Implement the love action
+                Long id = favs.get(holder.getAdapterPosition()).getId();
+                LikeClick.loveAction(v, holder.fav, id, context );
+
+                //TODO: Check to maje dislike disappear
+//                favs.remove(holder.getAdapterPosition());
+//                notifyDataSetChanged();
+
             }
         });
     }

@@ -41,10 +41,14 @@ public class CategoryActivity extends AppCompatActivity implements CatItemsAdapt
 
         ButterKnife.bind(this);
 
+
         Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
         categoryItems = bundle.getParcelableArrayList("catItems");
 
-        Log.i("CategoryActivity:", String.valueOf(categoryItems.get(0).getTitle()));
+        if (categoryItems.size() > 0) {
+            Log.i("CategoryActivity:", String.valueOf(categoryItems.get(0).getTitle()));
+        }
 
         mRecyclerView.setHasFixedSize(true);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL);
@@ -60,7 +64,23 @@ public class CategoryActivity extends AppCompatActivity implements CatItemsAdapt
     @Override
     public void onListItemClick(int clickedItemIndex) {
         //TODO(7) Open Review for Image
-        Toast.makeText(this, "Card number: "+clickedItemIndex+" clicked", Toast.LENGTH_LONG).show();
+        Log.i("Home ", "categoryItem Clicked ");
+        Log.i("Home ", "categoryItem Clicked " +categoryItems.get(clickedItemIndex).getImage());
+        Log.i("Home ", "categoryItem Clicked " +categoryItems.get(clickedItemIndex).getTitle());
 
+        Intent i = new Intent(this , ReviewActivity.class);
+
+        if(categoryItems.get(clickedItemIndex) != null){
+            i.putExtra("id",categoryItems.get(clickedItemIndex).getId());
+            i.putExtra("catName",categoryItems.get(clickedItemIndex).getCategoryName());
+            i.putExtra("title",categoryItems.get(clickedItemIndex).getTitle());
+            i.putExtra("price",categoryItems.get(clickedItemIndex).getPriceAfterOff());
+            i.putExtra("image",categoryItems.get(clickedItemIndex).getImage());
+            i.putExtra("n_color",categoryItems.get(clickedItemIndex).getNoOfColor());
+            i.putExtra("n_fav",categoryItems.get(clickedItemIndex).getFavProduct());
+
+
+            startActivity(i);
+        }
     }
 }

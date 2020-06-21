@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.artbot.frags.DiscoverFragment;
 import com.example.artbot.frags.HomeFragment;
@@ -67,10 +69,23 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_profile:
                     selectedFragment = new ProfileFragment();
                     break;
+                case R.id.blank:
+                    //TODO(7):Implement the POPUP Activity
+                    return true;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container , selectedFragment ).commit();
             return true;
         }
     };
 
+    public void CameraOpen(View view) {
+        //TODO: Cam Click
+        Toast.makeText(this, "Cam Clicked", Toast.LENGTH_SHORT).show();
+    }
+    public void clearSharedPreferences() {
+
+        SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
+        preferences.edit().remove("token").apply();
+        preferences.edit().remove("userID").apply();
+    }
 }
