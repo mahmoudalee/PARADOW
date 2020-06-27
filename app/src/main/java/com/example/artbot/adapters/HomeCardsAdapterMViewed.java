@@ -1,24 +1,17 @@
 package com.example.artbot.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.artbot.MainActivity;
 import com.example.artbot.R;
-import com.example.artbot.model.LikeRes;
 import com.example.artbot.model.MostLike;
-import com.example.artbot.network.DataService;
-import com.example.artbot.network.RetrofitInstance;
 import com.example.artbot.utils.LikeClick;
 import com.example.artbot.utils.StringRefactor;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
@@ -27,9 +20,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+import static com.example.artbot.utils.Links.IMAGE_BASE_URL;
 
 public class HomeCardsAdapterMViewed extends RecyclerView.Adapter<HomeCardsAdapterMViewed.ViewHolder> {
 
@@ -39,13 +31,13 @@ public class HomeCardsAdapterMViewed extends RecyclerView.Adapter<HomeCardsAdapt
         void onMostViewedClick(int clickedItemIndex);
     }
 
-    List<MostLike.Message> mostViewed;
-
-    String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
-    Context context;
+    private List<MostLike.Message> mostViewed;
+    private Context context;
+    List<Long> userLikes;
 
     public HomeCardsAdapterMViewed(ListItemClickListener listener) {
         mOnClickListener = listener;
+        this.userLikes = userLikes;
     }
 
     @NonNull
@@ -58,9 +50,8 @@ public class HomeCardsAdapterMViewed extends RecyclerView.Adapter<HomeCardsAdapt
         int layoutIdForListItem  = R.layout.home_card_item;
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForListItem, parent, false);
 
         return  new ViewHolder(view);
     }
@@ -77,6 +68,11 @@ public class HomeCardsAdapterMViewed extends RecyclerView.Adapter<HomeCardsAdapt
 
         //dTODO:(2) make the string more readable
         holder.mName.setText(StringRefactor.getENstring(mostViewed.get(i).getTitle()));
+
+        if(mostViewed.get(i).isLike()){
+            Log.i("Response Fav:", mostViewed.get(i).getTitle() +" ,ID :" + mostViewed.get(i).getId());
+            holder.fav.setImageResource(R.drawable.ic_favorite);
+        }
 
         holder.mDiscription.setText(mostViewed.get(i).getRate());
 

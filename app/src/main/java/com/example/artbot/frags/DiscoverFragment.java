@@ -23,8 +23,11 @@ import com.example.artbot.model.Datum;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,18 +97,23 @@ public class DiscoverFragment extends Fragment
                     Log.i("Response:","Categories have a problem");
                     Toast.makeText(getContext(), "Categories can't be loaded", Toast.LENGTH_LONG).show();
                 }
-                else{
+                else if(response.code() == 200 & response.body() != null){
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
+
                     categories = response.body().getMessage();
+
                     Log.i("Response:",categories.get(0).getName());
                     publishCategories(response.body());
+                }
+                else{
+                    Log.i("Response:","Server have a problem");
                 }
             }
 
             @Override
-            public void onFailure(Call<CategoryRes> call, Throwable t) {
-                Log.i("Failure:",t.getMessage());
+            public void onFailure(@NotNull Call<CategoryRes> call, @NotNull Throwable t) {
+                Log.i("Failure:", Objects.requireNonNull(t.getMessage()));
             }
         });
 

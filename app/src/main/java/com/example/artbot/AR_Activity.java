@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.artbot.utils.Links;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -29,7 +30,6 @@ import com.google.ar.sceneform.ux.TransformableNode;
 public class AR_Activity extends AppCompatActivity {
 
     ArFragment arFragment;
-    String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
     String image;
 
     @Override
@@ -73,7 +73,7 @@ public class AR_Activity extends AppCompatActivity {
 
                     Log.i("AR Activity" , "showing image "+image);
                     GlideApp.with(this)
-                            .load(IMAGE_BASE_URL + image)
+                            .load(Links.IMAGE_BASE_URL + image)
                             .placeholder(R.drawable.loading)
                             .error(R.mipmap.ic_launcher)
                             .into(imageView);

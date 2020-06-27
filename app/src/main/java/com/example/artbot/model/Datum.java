@@ -23,7 +23,7 @@ public class Datum implements Parcelable {
     @SerializedName("image")
     private String mImage;
     @SerializedName("imageOnWall")
-    private Object mImageOnWall;
+    private String mImageOnWall;
     @SerializedName("no_of_color")
     private String mNoOfColor;
     @SerializedName("offer_id")
@@ -47,6 +47,7 @@ public class Datum implements Parcelable {
     @SerializedName("width")
     private Object mWidth;
 
+
     protected Datum(Parcel in) {
         mCategoryName = in.readString();
         mCreatedAt = in.readString();
@@ -58,6 +59,7 @@ public class Datum implements Parcelable {
             mId = in.readLong();
         }
         mImage = in.readString();
+        mImageOnWall = in.readString();
         mNoOfColor = in.readString();
         mOfferId = in.readString();
         mPrice = in.readString();
@@ -138,11 +140,11 @@ public class Datum implements Parcelable {
         mImage = image;
     }
 
-    public Object getImageOnWall() {
+    public String getImageOnWall() {
         return mImageOnWall;
     }
 
-    public void setImageOnWall(Object imageOnWall) {
+    public void setImageOnWall(String imageOnWall) {
         mImageOnWall = imageOnWall;
     }
 
@@ -234,6 +236,7 @@ public class Datum implements Parcelable {
         mWidth = width;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -252,6 +255,7 @@ public class Datum implements Parcelable {
             dest.writeLong(mId);
         }
         dest.writeString(mImage);
+        dest.writeString(mImageOnWall);
         dest.writeString(mNoOfColor);
         dest.writeString(mOfferId);
         dest.writeString(mPrice);

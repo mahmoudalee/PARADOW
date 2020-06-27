@@ -9,7 +9,6 @@
 
 
     <RelativeLayout
-        android:id="@+id/log"
         android:layout_width="339dp"
         android:layout_height="320dp"
         android:layout_centerInParent="true"

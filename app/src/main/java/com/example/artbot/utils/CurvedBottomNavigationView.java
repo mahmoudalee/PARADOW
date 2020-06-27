@@ -1,4 +1,4 @@
-package com.example.artbot;
+package com.example.artbot.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;

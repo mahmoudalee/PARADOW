@@ -20,9 +20,12 @@ import com.example.artbot.R;
 import com.example.artbot.ReviewActivity;
 import com.example.artbot.adapters.HomeCardsAdapterMLikes;
 import com.example.artbot.adapters.HomeCardsAdapterMViewed;
+import com.example.artbot.model.FavRes;
 import com.example.artbot.model.MostLike;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
+import com.example.artbot.utils.Links;
+import com.example.artbot.utils.StringRefactor;
 
 import java.util.List;
 
@@ -50,26 +53,95 @@ public class HomeFragment extends Fragment
     @BindView(R.id.progress_bar_pop)
     ProgressBar popProgressBar;
 
-    RecyclerView.LayoutManager mLayoutManager;
+    private String userFav;
+    private List<Long> userLikes;
 
-    HomeCardsAdapterMViewed mRecAdapter;
-    HomeCardsAdapterMLikes mPopAdapter;
+    int flag = 0;
+
+    private Long userID;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private HomeCardsAdapterMViewed mRecAdapter;
+    private HomeCardsAdapterMLikes mPopAdapter;
 
     private Unbinder unbinder;
-    List<MostLike.Message> homeCardsMLikes;
-    List<MostLike.Message> homeCardsMViewed;
+    private List<MostLike.Message> homeCardsMLikes;
+    private List<MostLike.Message> homeCardsMViewed;
 
+    public HomeFragment(Long userID) {
+        this.userID = userID;
+    }
+
+    //TODO: Impalement like save on home
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        callRecommended();
 
+
+        callRecommended();
         callMostLike();
+
         unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
+
+    private void callUserData() {
+        if(flag != 2){
+            return;
+        }
+        flag =0;
+        DataService service = RetrofitInstance.getRetrofitInstance().create(DataService.class);
+        Call<FavRes> call = service.Favs( userID );
+        call.enqueue(new Callback<FavRes>() {
+            @Override
+            public void onResponse(Call<FavRes> call, Response<FavRes> response) {
+
+                if (response.code()==400)
+                {
+                    Log.i("Response:","Favorites have a problem");
+                    Toast.makeText(getContext(), "Favorites can't be loaded", Toast.LENGTH_LONG).show();
+                }
+                else if(response.code() == 200){
+//                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
+//                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
+                    Log.i("Response Favs:", String.valueOf(response.body().getMessage().getUserFavourite()));
+
+                    userFav = response.body().getMessage().getUserFavourite();
+                    userLikes = StringRefactor.getuserFavList(userFav);
+                    for (int i=0 ; i< homeCardsMViewed.size();i++){
+                        if(userLikes.contains(homeCardsMViewed.get(i).getId())){
+                            homeCardsMViewed.get(i).setLike(true);
+                            Log.i("Response Favs:", homeCardsMViewed.get(i).getTitle());
+
+                        }
+                        else
+                            homeCardsMViewed.get(i).setLike(false);
+                    }
+                    for (int i=0 ; i< homeCardsMLikes.size();i++){
+                        if(userLikes.contains(homeCardsMLikes.get(i).getId())){
+                            homeCardsMLikes.get(i).setLike(true);
+                        }
+                        else
+                            homeCardsMLikes.get(i).setLike(false);
+                    }
+                    mRecAdapter.setData(homeCardsMViewed);
+                    mPopAdapter.setData(homeCardsMLikes);
+
+                }
+                else{
+                    Log.i("Response:","Server have a problem");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FavRes> call, Throwable t) {
+                Log.i("Failure:",t.getMessage());
+            }
+        });
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -79,6 +151,7 @@ public class HomeFragment extends Fragment
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+
 
         rvRecommends.setHasFixedSize(true);
 
@@ -111,12 +184,17 @@ public class HomeFragment extends Fragment
                     Log.i("Response:","Recommendations have a problem");
                     Toast.makeText(getContext(), "Recommendations can't be loaded", Toast.LENGTH_LONG).show();
                 }
-                else{
+                else if (response.code() == 200){
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
                     Log.i("Response:",response.body().getMessage().get(0).getDescription());
                     homeCardsMViewed = response.body().getMessage();
                     publishRecommend(response.body());
+                    flag += 1;
+                    callUserData();
+                }
+                else{
+                    Log.i("Response:","Server have a problem");
                 }
             }
 
@@ -152,16 +230,19 @@ public class HomeFragment extends Fragment
                     Log.i("Response:","MostLike have a problem");
                     Toast.makeText(getContext(), "MostLike can't be loaded", Toast.LENGTH_LONG).show();
                 }
-                else if(response.code() == 502){
-                    Log.i("Response:","Server have a problem");
-                }
-                else{
+                else if(response.code() == 200){
 
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
                     Log.i("Response:",response.body().getMessage().get(0).getDescription());
                     homeCardsMLikes = response.body().getMessage();
                     publishMostLike(response.body());
+                    flag += 1;
+                    callUserData();
+
+                }
+                else{
+                    Log.i("Response:","Server have a problem");
                 }
             }
 
@@ -197,10 +278,12 @@ public class HomeFragment extends Fragment
             i.putExtra("title",homeCardsMLikes.get(clickedItemIndex).getTitle());
             i.putExtra("price",homeCardsMLikes.get(clickedItemIndex).getPriceAfterOff());
             i.putExtra("image",homeCardsMLikes.get(clickedItemIndex).getImage());
+            i.putExtra("image_on_wall",homeCardsMLikes.get(clickedItemIndex).getImageOnWall());
             i.putExtra("n_color",homeCardsMLikes.get(clickedItemIndex).getNoOfColor());
             i.putExtra("n_fav",homeCardsMLikes.get(clickedItemIndex).getFavProduct());
 
-
+            //Just to add as a view
+            Links.calImageView(homeCardsMLikes.get(clickedItemIndex).getId());
             startActivity(i);
         }
 
@@ -222,9 +305,11 @@ public class HomeFragment extends Fragment
             i.putExtra("title",homeCardsMViewed.get(clickedItemIndex).getTitle());
             i.putExtra("price",homeCardsMViewed.get(clickedItemIndex).getPriceAfterOff());
             i.putExtra("image",homeCardsMViewed.get(clickedItemIndex).getImage());
+            i.putExtra("image_on_wall",homeCardsMViewed.get(clickedItemIndex).getImageOnWall());
             i.putExtra("n_color",homeCardsMViewed.get(clickedItemIndex).getNoOfColor());
             i.putExtra("n_fav",homeCardsMViewed.get(clickedItemIndex).getFavProduct());
-
+            //Just to add as a view
+            Links.calImageView(homeCardsMViewed.get(clickedItemIndex).getId());
 
             startActivity(i);
         }

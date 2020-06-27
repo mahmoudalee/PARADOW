@@ -19,7 +19,12 @@ public class FavRes {
     }
 
     public class Message {
-
+        @SerializedName("User Data")
+        private String mUserData;
+        @SerializedName("User Image")
+        private String mUserImage;
+        @SerializedName("User Favourite")
+        private String mUserFavourite;
         @SerializedName("User Fav")
         private List<UserFav> mUserFav;
 
@@ -29,6 +34,30 @@ public class FavRes {
 
         public void setUserFav(List<UserFav> userFav) {
             mUserFav = userFav;
+        }
+
+        public String getUserData() {
+            return mUserData;
+        }
+
+        public void setUserData(String mUserData) {
+            this.mUserData = mUserData;
+        }
+
+        public String getUserImage() {
+            return mUserImage;
+        }
+
+        public void setUserImage(String mUserImage) {
+            this.mUserImage = mUserImage;
+        }
+
+        public String getUserFavourite() {
+            return mUserFavourite;
+        }
+
+        public void setUserFavourite(String mUserFavourite) {
+            this.mUserFavourite = mUserFavourite;
         }
 
     }

@@ -1,6 +1,7 @@
 package com.example.artbot.network;
 
 import com.example.artbot.model.CategoryRes;
+import com.example.artbot.model.Datum;
 import com.example.artbot.model.FavRes;
 import com.example.artbot.model.LikeRes;
 import com.example.artbot.model.LoginRes;
@@ -32,6 +33,8 @@ public interface DataService {
     @GET("/api/category")
     Call<CategoryRes> Categories();
 
+    @GET("/api/catdetails/{id}")
+    Call<Datum> ImageViewed(@Path("id") Long id);
 
     @GET("/api/user/{id}")
     Call<FavRes> Favs(@Path("id") Long id);

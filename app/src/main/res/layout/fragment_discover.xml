@@ -41,7 +41,8 @@
             android:layout_margin="10dp"
             android:background="@color/white"
             android:orientation="vertical"
-            app:corner_radius="50dp">
+            app:corner_radius="50dp"
+            android:onClick="TextWrite">
 
             <ImageView
                 android:layout_width="75dp"
@@ -103,10 +104,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingBottom="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="34dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_categories" />
 </androidx.constraintlayout.widget.ConstraintLayout>

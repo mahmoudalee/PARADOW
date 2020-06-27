@@ -6,28 +6,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.artbot.databinding.ActivityLoginBinding;
 import com.example.artbot.model.LoginRes;
 import com.example.artbot.model.UserData;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
 
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,58 +29,38 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
-    @BindView(R.id.input_email)
-    EditText _userNameText;
-    @BindView(R.id.input_password)
-    EditText _passwordText;
-    @BindView(R.id.btn_login)
-    Button _loginButton;
-    @BindView(R.id.link_signup)
-    TextView _signupLink;
+
+    ActivityLoginBinding binding;
 
     UserData user = new UserData();
-    String token;
+    String token ;
     Long userID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        ButterKnife.bind(this);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
 
         SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
         token = preferences.getString("token", null);
         userID = preferences.getLong("userID", -1);
-//
+
         if (token != null){
             Intent intent = new Intent(this, MainActivity.class);
-//
-//            intent.putExtra("user",user);
-//
+
             startActivity(intent);
             finish();
         }
 
-        _loginButton.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(v -> login());
 
-            @Override
-            public void onClick(View v) {
-
-                login();
-
-            }
-        });
-
-        _signupLink.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
+        binding.linkSignup.setOnClickListener(v -> {
 //                 Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-            }
+            Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
+            startActivityForResult(intent, REQUEST_SIGNUP);
         });
 
     }
@@ -106,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        _loginButton.setEnabled(false);
+        binding.btnLogin.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
@@ -115,8 +87,8 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String email = _userNameText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String email = binding.inputEmail.getText().toString();
+        String password = binding.inputPassword.getText().toString();
 
 
         DataService service = RetrofitInstance.getRetrofitInstance().create(DataService.class);
@@ -131,9 +103,9 @@ public class LoginActivity extends AppCompatActivity {
                 {
                     Log.i("Response:","Incorrect email or password");
                     Toast.makeText(getApplicationContext(), "Incorrect email or password", Toast.LENGTH_LONG).show();
-                    _loginButton.setEnabled(true);
+                    binding.btnLogin.setEnabled(true);
                 }
-                else{
+                else if(response.code() == 200 & response.body()!=null){
                     SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
                     preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
@@ -149,12 +121,15 @@ public class LoginActivity extends AppCompatActivity {
                     onLoginSuccess();
 
                 }
+                else{
+                    Log.i("Response:","Server have a problem");
+                }
             }
 
             @Override
             public void onFailure(Call<LoginRes> call, Throwable t) {
                 progressDialog.dismiss();
-                Log.i("Failure:",t.getMessage());
+                Log.i("Failure:", Objects.requireNonNull(t.getMessage()));
                 onLoginFailed();
             }
         });
@@ -188,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
 
-        _loginButton.setEnabled(true);
+        binding.btnLogin.setEnabled(true);
 
         Intent intent= new Intent(LoginActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -202,27 +177,27 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed, please check your Data", Toast.LENGTH_LONG).show();
-        _loginButton.setEnabled(true);
+        binding.btnLogin.setEnabled(true);
     }
 
     public boolean validate() {
         boolean valid = true;
 
-        String email = _userNameText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String email = binding.inputEmail.getText().toString();
+        String password = binding.inputPassword.getText().toString();
 
         if (email.isEmpty()) {
-            _userNameText.setError("enter a valid userName address");
+            binding.inputEmail.setError("enter a valid userName address");
             valid = false;
         } else {
-            _userNameText.setError(null);
+            binding.inputEmail.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 5) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+            binding.inputPassword.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
-            _passwordText.setError(null);
+            binding.inputPassword.setError(null);
         }
 
         return valid;
@@ -231,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        assert cm != null;
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected() ;
     }
 

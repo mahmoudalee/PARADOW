@@ -12,19 +12,22 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.artbot.R;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
+import org.jetbrains.annotations.NotNull;
+
+import static com.example.artbot.utils.Links.IMAGE_BASE_URL;
+
 
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
-    private LayoutInflater layoutInflater;
-    String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
-    String image;
+    private String image , image_on_wall;
     //this photos that going to be shown in the ViewPager
 //    private Integer[] images = {R.drawable.slide1,R.drawable.slide2,R.drawable.slide3};
 
-    public ViewPagerAdapter(Context context,String image) {
+    public ViewPagerAdapter(Context context, String image, String image_on_wall) {
         this.context = context;
         this.image = image;
+        this.image_on_wall = image_on_wall;
     }
 
     @Override
@@ -37,16 +40,17 @@ public class ViewPagerAdapter extends PagerAdapter {
         return view == object;
     }
 
+    @NotNull
     @Override
-    public Object instantiateItem(ViewGroup container, final int position) {
+    public Object instantiateItem(@NotNull ViewGroup container, final int position) {
 
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.review_pager_layout, null);
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.review_pager_layout, container ,false);
+        ImageView imageView = view.findViewById(R.id.imageView);
 //        imageView.setImageResource(images[position]);
 
         GlideApp.with(context)
-                .load(IMAGE_BASE_URL + image )
+                .load(IMAGE_BASE_URL +( (position==0)?image:image_on_wall ) )
                 .placeholder(R.drawable.loading)
                 .error(R.mipmap.ic_launcher)
                 .into(imageView);
@@ -59,7 +63,7 @@ public class ViewPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NotNull ViewGroup container, int position, @NotNull Object object) {
 
         ViewPager vp = (ViewPager) container;
         View view = (View) object;

@@ -15,15 +15,13 @@ import com.example.artbot.frags.DiscoverFragment;
 import com.example.artbot.frags.HomeFragment;
 import com.example.artbot.frags.FavoritesFragment;
 import com.example.artbot.frags.ProfileFragment;
-import com.example.artbot.model.UserData;
+import com.example.artbot.utils.CurvedBottomNavigationView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.sdsmdg.harjot.vectormaster.models.PathModel;
 
 public class MainActivity extends AppCompatActivity {
 
     CurvedBottomNavigationView bottomNavigationView;
 
-    Intent callerIntent;
     public static String token;
     SharedPreferences sharedPreferences;
 //    UserData user;
@@ -44,21 +42,26 @@ public class MainActivity extends AppCompatActivity {
 //        callerIntent= this.getIntent();
 //        user =  callerIntent.getParcelableExtra("user");
 
-
+        callUserData(userID);
 
 
         bottomNavigationView.inflateMenu(R.menu.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container , new HomeFragment() ).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container , new HomeFragment(userID) ).commit();
 
     }
+
+    private void callUserData(Long userID) {
+
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             Fragment selectedFragment = null;
             switch (menuItem.getItemId()){
                 case R.id.nav_home:
-                    selectedFragment = new HomeFragment();
+                    selectedFragment = new HomeFragment(userID);
                     break;
                 case R.id.nav_discover:
                     selectedFragment = new DiscoverFragment();
@@ -82,10 +85,9 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Cam Click
         Toast.makeText(this, "Cam Clicked", Toast.LENGTH_SHORT).show();
     }
-    public void clearSharedPreferences() {
 
-        SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
-        preferences.edit().remove("token").apply();
-        preferences.edit().remove("userID").apply();
+    public void TextWrite(View view) {
+        Intent intent = new Intent(this , TextToDrawActivity.class);
+        startActivity(intent);
     }
 }

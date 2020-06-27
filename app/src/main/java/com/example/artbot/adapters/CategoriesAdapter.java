@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.artbot.R;
 import com.example.artbot.model.CategoryRes;
+import com.example.artbot.utils.Links;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import static com.example.artbot.utils.Links.IMAGE_BASE_URL;
+
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
 
@@ -31,9 +33,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     }
 
 
-    List<CategoryRes.Message> categories ;
-    String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
-    Context context;
+    private List<CategoryRes.Message> categories ;
+    private Context context;
 
     public CategoriesAdapter(ListItemClickListener itemClickListener) {
         mOnClickListener = itemClickListener;
@@ -44,21 +45,22 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(R.layout.categories_list_item, parent, shouldAttachToParentImmediately);
+        View view = inflater.inflate(R.layout.categories_list_item, parent, false);
 
         return  new CategoriesAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-//        Glide.with(context)
-//                .load(IMAGE_BASE_URL + categories.get(i).getImage())
-//                .placeholder(R.drawable.loading)
-//                .error(R.mipmap.ic_launcher)
-////                .transform(new BlurTransformation())
-//                .into(holder.imageView);
+/*
+        Glide.with(context)
+                .load(IMAGE_BASE_URL + categories.get(i).getImage())
+                .placeholder(R.drawable.loading)
+                .error(R.mipmap.ic_launcher)
+//                .transform(new BlurTransformation())
+                .into(holder.imageView);
+*/
 
         Log.i("Catigory Frag"  , categories.get(i).getImage() );
 

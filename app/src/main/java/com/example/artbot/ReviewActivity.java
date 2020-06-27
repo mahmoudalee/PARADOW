@@ -7,39 +7,33 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.artbot.adapters.ViewPagerAdapter;
+import com.example.artbot.databinding.ActivityReviewBinding;
 import com.example.artbot.utils.StringRefactor;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class ReviewActivity extends AppCompatActivity {
 
     Long id;
-    String catName,title,price,image,nColor,nFavs;
+    String catName,title,price,image,nColor,nFavs,image_on_wall;
 
-    ViewPager viewPager;
-    LinearLayout sliderDotspanel;
     private int dotscount;
     private ImageView[] dots;
 
-    @BindView(R.id.image_name_txt)
-    TextView mimageName;
-    @BindView(R.id.review_cat_name_txt)
-    TextView mcatName;
+
+    ActivityReviewBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_review);
+        binding = ActivityReviewBinding.inflate(getLayoutInflater());
 
-        ButterKnife.bind(this);
+        setContentView(binding.getRoot());
+
 
         Intent intent = getIntent();
         id = intent.getLongExtra("id",0);
@@ -47,25 +41,23 @@ public class ReviewActivity extends AppCompatActivity {
         title = intent.getStringExtra("title");
         price =intent.getStringExtra("price");
         image = intent.getStringExtra("image");
+        image_on_wall = intent.getStringExtra("image_on_wall");
         nColor = intent.getStringExtra("n_color");
         nFavs = intent.getStringExtra("n_fav");
 
 //        Toast.makeText(this, "ReviewActivity "+id+":id , "+title+":title", Toast.LENGTH_LONG).show();
         makeViewPager();
 
-        mimageName.setText(StringRefactor.getENstring(title));
-        mcatName.setText(catName);
-
+        binding.reviewCatNameTxt.setText(StringRefactor.getENstring(title));
+        binding.imageNameTxt.setText(catName);
 
     }
 
     private void makeViewPager() {
-        viewPager = findViewById(R.id.viewPager);
-        sliderDotspanel = findViewById(R.id.SliderDots);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this,image);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this,image, image_on_wall);
 
-        viewPager.setAdapter(viewPagerAdapter);
+        binding.viewPager.setAdapter(viewPagerAdapter);
 
         //viewPagerAdapter.getCount() returns the number of images that add in ViewPagerAdapter class
         dotscount = viewPagerAdapter.getCount();
@@ -79,12 +71,12 @@ public class ReviewActivity extends AppCompatActivity {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(8, 0, 8, 4);
 
-            sliderDotspanel.addView(dots[i], params);
+            binding.SliderDots.addView(dots[i], params);
         }
         //set the default active to the first dot
         dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.active_dot));
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }

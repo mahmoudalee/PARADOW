@@ -8,7 +8,6 @@
     android:background="@drawable/log_bg">
 
     <RelativeLayout
-        android:id="@+id/log"
         android:layout_width="326dp"
         android:layout_height="443dp"
         android:layout_centerInParent="true"

@@ -12,15 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.artbot.R;
 import com.example.artbot.model.Datum;
-import com.example.artbot.model.UserFav;
 import com.example.artbot.utils.LikeClick;
-import com.example.artbot.utils.StringRefactor;
+import com.example.artbot.utils.Links;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.artbot.utils.Links.IMAGE_BASE_URL;
+import static com.example.artbot.utils.StringRefactor.getENstring;
 
 public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHolder> {
 
@@ -30,9 +32,8 @@ public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHo
         void onListItemClick(int clickedItemIndex);
     }
 
-    List<Datum> catItems;
-    String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
-    Context context;
+    private List<Datum> catItems;
+    private Context context;
 
     public CatItemsAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
@@ -46,9 +47,8 @@ public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHo
         int layoutIdForListItem = R.layout.cat_item;
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForListItem, parent, false);
 
         return  new ViewHolder(view);
     }
@@ -64,17 +64,14 @@ public class CatItemsAdapter extends RecyclerView.Adapter<CatItemsAdapter.ViewHo
                 .into(holder.imageView);
 
         //dTODO:(2) make the string more readable
-        holder.mName.setText(StringRefactor.getENstring(catItems.get(i).getTitle()));
+        holder.mName.setText(getENstring(catItems.get(i).getTitle()));
 
         holder.mDiscription.setText(catItems.get(i).getRate());
 
-        holder.fav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO:(1) Implement the love action
-                Long id = catItems.get(holder.getAdapterPosition()).getId();
-                LikeClick.loveAction(v, holder.fav, id, context );
-            }
+        holder.fav.setOnClickListener(v -> {
+            //TODO:(1) Implement the love action
+            Long id = catItems.get(holder.getAdapterPosition()).getId();
+            LikeClick.loveAction(v, holder.fav, id, context );
         });
     }
 

@@ -22,6 +22,7 @@ import com.example.artbot.model.FavRes;
 import com.example.artbot.model.UserFav;
 import com.example.artbot.network.DataService;
 import com.example.artbot.network.RetrofitInstance;
+import com.example.artbot.utils.Links;
 
 import java.util.List;
 
@@ -98,12 +99,15 @@ public class FavoritesFragment extends Fragment implements FavsAdapter.ListItemC
                     Log.i("Response:","Favorites have a problem");
                     Toast.makeText(getContext(), "Favorites can't be loaded", Toast.LENGTH_LONG).show();
                 }
-                else{
+                else if(response.code() == 200){
 //                    SharedPreferences preferences = getSharedPreferences("myPrefs", MODE_PRIVATE);
 //                    preferences.edit().putString("token", response.body().getMessage().getRememberToken()).apply();
                     Log.i("Response Favs:", String.valueOf(response.body().getMessage().getUserFav().get(1).getTitle()));
                     userFavs = response.body().getMessage().getUserFav();
                     publishFavs();
+                }
+                else{
+                    Log.i("Response:","Server have a problem");
                 }
             }
 
@@ -145,9 +149,11 @@ public class FavoritesFragment extends Fragment implements FavsAdapter.ListItemC
             i.putExtra("title",userFavs.get(clickedItemIndex).getTitle());
             i.putExtra("price",userFavs.get(clickedItemIndex).getPriceAfterOff());
             i.putExtra("image",userFavs.get(clickedItemIndex).getImage());
+            i.putExtra("image_on_wall",userFavs.get(clickedItemIndex).getImageOnWall());
             i.putExtra("n_color",userFavs.get(clickedItemIndex).getNoOfColor());
             i.putExtra("n_fav",userFavs.get(clickedItemIndex).getFavProduct());
-
+            //Just to add as a view
+            Links.calImageView(userFavs.get(clickedItemIndex).getId());
 
             startActivity(i);
         }

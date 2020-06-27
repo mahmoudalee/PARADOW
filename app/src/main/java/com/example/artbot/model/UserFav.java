@@ -22,7 +22,7 @@ public class UserFav {
     @SerializedName("image")
     private String mImage;
     @SerializedName("imageOnWall")
-    private Object mImageOnWall;
+    private String mImageOnWall;
     @SerializedName("no_of_color")
     private String mNoOfColor;
     @SerializedName("offer_id")
@@ -102,11 +102,11 @@ public class UserFav {
         mImage = image;
     }
 
-    public Object getImageOnWall() {
+    public String getImageOnWall() {
         return mImageOnWall;
     }
 
-    public void setImageOnWall(Object imageOnWall) {
+    public void setImageOnWall(String imageOnWall) {
         mImageOnWall = imageOnWall;
     }
 

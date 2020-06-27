@@ -35,7 +35,7 @@ public class MostLike {
         @SerializedName("image")
         private String mImage;
         @SerializedName("imageOnWall")
-        private Object mImageOnWall;
+        private String mImageOnWall;
         @SerializedName("no_of_color")
         private String mNoOfColor;
         @SerializedName("offer_id")
@@ -58,6 +58,15 @@ public class MostLike {
         private String mViews;
         @SerializedName("width")
         private Object mWidth;
+        private boolean like;
+
+        public boolean isLike() {
+            return like;
+        }
+
+        public void setLike(boolean like) {
+            this.like = like;
+        }
 
         public String getCategoryName() {
             return mCategoryName;
@@ -115,11 +124,11 @@ public class MostLike {
             mImage = image;
         }
 
-        public Object getImageOnWall() {
+        public String getImageOnWall() {
             return mImageOnWall;
         }
 
-        public void setImageOnWall(Object imageOnWall) {
+        public void setImageOnWall(String imageOnWall) {
             mImageOnWall = imageOnWall;
         }
 

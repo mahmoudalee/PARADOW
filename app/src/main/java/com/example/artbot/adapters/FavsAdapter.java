@@ -10,12 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.artbot.R;
-import com.example.artbot.frags.FavoritesFragment;
-import com.example.artbot.model.MostLike;
 import com.example.artbot.model.UserFav;
 import com.example.artbot.utils.LikeClick;
+import com.example.artbot.utils.Links;
 import com.example.artbot.utils.StringRefactor;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideApp;
 
@@ -23,6 +21,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.artbot.utils.Links.IMAGE_BASE_URL;
 
 public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
 
@@ -32,9 +32,8 @@ public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
         void onListItemClick(int clickedItemIndex);
     }
 
-    List<UserFav> favs;
-    String IMAGE_BASE_URL = "http://paradowme.000webhostapp.com/images/";
-    Context context;
+    private List<UserFav> favs;
+    private Context context;
 
     public FavsAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
@@ -48,9 +47,8 @@ public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
         int layoutIdForListItem = R.layout.fav_item;
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
 
-        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForListItem, parent, false);
 
         return  new ViewHolder(view);
     }
@@ -70,18 +68,15 @@ public class FavsAdapter extends RecyclerView.Adapter<FavsAdapter.ViewHolder> {
 
         holder.mDiscription.setText(favs.get(i).getRate());
 
-        holder.fav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO:(1) Implement the love action
-                Long id = favs.get(holder.getAdapterPosition()).getId();
-                LikeClick.loveAction(v, holder.fav, id, context );
+        holder.fav.setOnClickListener(v -> {
+            //TODO:(1) Implement the love action
+            Long id = favs.get(holder.getAdapterPosition()).getId();
+            LikeClick.loveAction(v, holder.fav, id, context );
 
-                //TODO: Check to maje dislike disappear
+            //TODO: Check to maje dislike disappear
 //                favs.remove(holder.getAdapterPosition());
 //                notifyDataSetChanged();
 
-            }
         });
     }
 
