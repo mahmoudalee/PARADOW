@@ -31,6 +31,7 @@ public class AR_Activity extends AppCompatActivity {
 
     ArFragment arFragment;
     String image;
+    boolean flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +42,17 @@ public class AR_Activity extends AppCompatActivity {
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.sceneform_fragment);
         Intent intent = getIntent();
         image = intent.getStringExtra("image");
-
+        flag = true;
 
         arFragment.setOnTapArPlaneListener(new BaseArFragment.OnTapArPlaneListener() {
             @Override
             public void onTapPlane(HitResult hitResult, Plane plane, MotionEvent motionEvent) {
-                Toast.makeText(getApplication(),"clicked",Toast.LENGTH_LONG).show();
-
-                Anchor anchor = hitResult.createAnchor();
-                addNodeToScene(arFragment, anchor);
+                Toast.makeText(getApplication(), "clicked", Toast.LENGTH_LONG).show();
+                if (flag){
+                    Anchor anchor = hitResult.createAnchor();
+                    addNodeToScene(arFragment, anchor);
+                    flag = false;
+                }
             }
         });
 

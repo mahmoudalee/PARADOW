@@ -11,8 +11,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Links {
-    public static final String IMAGE_BASE_URL = "http://paradowm.000webhostapp.com/images/";
-    public static final String BASE_URL = "http://paradowm.000webhostapp.com";
+    public static final String IMAGE_BASE_URL = "http://myportfolio20.000webhostapp.com/images/";
+    public static final String BASE_URL = "http://myportfolio20.000webhostapp.com/";
 
 
     public static void calImageView(Long id) {
